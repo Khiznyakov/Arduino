@@ -31,10 +31,8 @@ int distM()
   digitalWrite(trigPin, HIGH); 
   delayMicroseconds(10); 
   digitalWrite(trigPin, LOW); 
-  nowDist = pulseIn(echoPin, HIGH, 2941); 
+  nowDist = pulseIn(echoPin, HIGH, 2950); //Считывает длину сигнала на заданном порту,возвращает длину сигнала в микросекундах
   return distance = (int)nowDist / 5.82;
-  //Serial.print(distance); 
- // Serial.println(" mm"); 
 } 
 void loop() 
 { 
