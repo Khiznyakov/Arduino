@@ -1,12 +1,16 @@
 #include <Servo.h> //библиотека для работы с серв. приводом
 Servo servo1; 
 Servo servo2; 
-Servo servo3; 
+Servo servo3;
+int echoPin = 9; //пины вкл. датчика
+int trigPin = 8;  
 int distance = 0; 
-float degrees =0;
-float stdDDistance1 = 300; 
-float stdDDistance2 = 600;
-float rotationValue = 180; 
+int mediumDistance =0;
+int degrees =0;
+int stdDDistance1 = 300; 
+int stdDDistance2 = 600;
+int stdDDistance3 = 900;
+int rotationValue = 180; 
 void setup() 
 { 
   servo1.attach(13); 
@@ -14,43 +18,50 @@ void setup()
   servo3.attach(11);  
   servo1.write(0);  
   servo2.write(0); 
-  servo3.write(0);   
+  servo3.write(0); 
+  pinMode(trigPin, OUTPUT); 
+  pinMode(echoPin, INPUT);   
   Serial.begin(9600); 
 } 
-
+int distM() 
+{ 
+  float nowDist; 
+  digitalWrite(trigPin, LOW); 
+  delayMicroseconds(2); 
+  digitalWrite(trigPin, HIGH); 
+  delayMicroseconds(10); 
+  digitalWrite(trigPin, LOW); 
+  nowDist = pulseIn(echoPin, HIGH, 2941); 
+  return distance = (int)nowDist / 5.82;
+  //Serial.print(distance); 
+ // Serial.println(" mm"); 
+} 
 void loop() 
 { 
-  if(Serial.available() > 0) 
-  { 
-    String inpStr = Serial.readString(); 
-    distance = inpStr.toInt()-100; 
-    Serial.println(distance); 
-    if(distance<stdDDistance1) 
+  mediumDistance = (mediumDistance + distM())/2;
+    if(mediumDistance<=stdDDistance1) 
     { 
-      degrees = (int)(distance/1.67); 
+      degrees = (int)(mediumDistance/1.67); 
       servo1.write(degrees); 
       servo2.write(0); 
       servo3.write(0);     
-      Serial.println(degrees); 
-      delay(1000); 
+      Serial.println(degrees);       
     } 
-    else if(distance < stdDDistance2) 
+    else if(mediumDistance <= stdDDistance2) 
     { 
-        degrees = (int)((distance-300)/1.67); 
+        degrees = (int)((mediumDistance-300)/1.67); 
         servo1.write(rotationValue);        
         servo2.write(degrees); 
         servo3.write(0);       
-        Serial.println(degrees); 
-        delay(1000); 
+        Serial.println(degrees);          
     } 
-    else 
+    else if(mediumDistance <= stdDDistance3)
     {  
-      degrees = (int)((distance-600)/1.67); 
+      degrees = (int)((mediumDistance-600)/1.67); 
       servo1.write(rotationValue); 
       servo2.write(rotationValue); 
       servo3.write(degrees); 
-      Serial.println(degrees); 
-      delay(1000); 
-    } 
-  } 
+      Serial.println(degrees);       
+    }
+    delay(100);    
 }
