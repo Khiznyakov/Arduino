@@ -1,25 +1,24 @@
-<<<<<<< HEAD
 unsigned int count = 0;
 int servoPin1 = 13;
 int servoPin2 = 12;
 int servoPin3 = 11;
-int trigPin = 8;
-int echoPin = 9;
+const uint8_t trigPin = 8;
+const uint8_t echoPin = 9;
+uint8_t increment = 10;
 int startAngle = 900;
 int stdDistance1 = 333;
 int stdDistance2 = 666;
 int stdDistance3 = 999;
-double current = 0;
-double increment = 10;
-double distance = 0;
-double mediumDistance = 0;
+int current = 0;
+int distance = 0;
+int mediumDistance = 0;
 double stdDistServo1 = 0; // Стандарное положение для первого серва
 double stdDistServo2 = 333; // Стандарное положение для второго серва
 double stdDistServo3 = 666; // Стандарное положение для третьего серва
 
 void DistSearch()  // Ищем расстояние
 {
-  float dist;
+  uint8_t dist;//uint8_t uns. int 8 бит
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -31,7 +30,7 @@ void DistSearch()  // Ищем расстояние
   Serial.println(" mm");
 }
 
-void SetServoPos(int servoPin, double distance, double olddistance) // Метод установки положения серва
+void SetServoPos(int servoPin, int distance, int olddistance) // Метод установки положения серва
 {
   olddistance = (double)olddistance * 3.5 + startAngle;
   distance = (double)distance * 3.5 + startAngle;
@@ -76,10 +75,10 @@ void loop()
   mediumDistance = distance;
   if (mediumDistance < stdDistance1)//попали в первый промежуток, работает только первый серво
   {
-    SetServoPos(servoPin1, distance, stdDistServo1);
-    SetServoPos(servoPin2, 0, stdDistServo2 - 333);
+    SetServoPos(servoPin1, distance, stdDistServo1);//за один инкремент будет 25000
+    SetServoPos(servoPin2, 0, stdDistServo2 - 333);//за один будет 25000
     stdDistServo2 = 333;
-    SetServoPos(servoPin3, 0, stdDistServo3 - 666);
+    SetServoPos(servoPin3, 0, stdDistServo3 - 666);//25000
     stdDistServo3 = 666;    
     stdDistServo1 = mediumDistance;
   }
@@ -101,71 +100,5 @@ void loop()
     SetServoPos(servoPin3, distance - 666, stdDistServo3 - 666);
     stdDistServo3 = mediumDistance;
   }
-  delay(100);
-=======
-#include <Servo.h> //библиотека для работы с серв. приводом
-Servo servo1; 
-Servo servo2; 
-Servo servo3;
-int echoPin = 9; //пины вкл. датчика
-int trigPin = 8;  
-int distance = 0; 
-int mediumDistance =0;
-int degrees =0;
-int stdDDistance1 = 300; 
-int stdDDistance2 = 600;
-int stdDDistance3 = 900;
-int rotationValue = 180; 
-void setup() 
-{ 
-  servo1.attach(13); 
-  servo2.attach(12); 
-  servo3.attach(11);  
-  servo1.write(0);  
-  servo2.write(0); 
-  servo3.write(0); 
-  pinMode(trigPin, OUTPUT); 
-  pinMode(echoPin, INPUT);   
-  Serial.begin(9600); 
-} 
-int distM() 
-{ 
-  float nowDist; 
-  digitalWrite(trigPin, LOW); 
-  delayMicroseconds(2); 
-  digitalWrite(trigPin, HIGH); 
-  delayMicroseconds(10); 
-  digitalWrite(trigPin, LOW); 
-  nowDist = pulseIn(echoPin, HIGH, 2950); //Считывает длину сигнала на заданном порту,возвращает длину сигнала в микросекундах
-  return distance = (int)nowDist / 5.82;
-} 
-void loop() 
-{ 
-  mediumDistance = (mediumDistance + distM())/2;
-    if(mediumDistance<=stdDDistance1) 
-    { 
-      degrees = (int)(mediumDistance/1.67); 
-      servo1.write(degrees); 
-      servo2.write(0); 
-      servo3.write(0);     
-      Serial.println(degrees);       
-    } 
-    else if(mediumDistance <= stdDDistance2) 
-    { 
-        degrees = (int)((mediumDistance-300)/1.67); 
-        servo1.write(rotationValue);        
-        servo2.write(degrees); 
-        servo3.write(0);       
-        Serial.println(degrees);          
-    } 
-    else if(mediumDistance <= stdDDistance3)
-    {  
-      degrees = (int)((mediumDistance-600)/1.67); 
-      servo1.write(rotationValue); 
-      servo2.write(rotationValue); 
-      servo3.write(degrees); 
-      Serial.println(degrees);       
-    }
-    delay(100);    
->>>>>>> origin/Task-3
-}
+  delay(100);//крутит раз в 100мс.
+ }
